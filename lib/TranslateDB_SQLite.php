@@ -7,7 +7,7 @@ class TranslateDB_sqlite implements TranslateDB {
     protected $db = null;
     
     public function __construct() {
-        $this->db = new PDO("sqlite:".$GLOBALS['TMP_PATH']."/translatedb.sqlite");
+        $this->db = new PDO("sqlite:".$GLOBALS['STUDIP_BASE_PATH']."/data/translatedb.sqlite");
         $this->checkDB();
     }
     
