@@ -8,7 +8,7 @@ Das EasyTranslator-Plugin soll anderen Plugins helfen, sich lokalisieren zu lass
 
 #### *Übersetzen mit EasyTranslator*
 
-Bau ein Plugin, schreibe die Textstrings nicht wie bei gettext üblich mit der Unterstrichfunktion ´_("Hallo Welt")´, sondern mit der l-Funktion ´l("Hallo Welt")´.
+Bau ein Plugin, schreibe die Textstrings nicht wie bei gettext üblich mit der Unterstrichfunktion `_("Hallo Welt")`, sondern mit der l-Funktion `l("Hallo Welt")`.
 Diese l-Funktion (l wie localize) kümmert sich auch gleich um das Escapen über htmlReady. Falls das unerwünscht sein sollte, gibt es als Alternative die ll-Funktion an. Das braucht man allerdings nur für Namen von Reitern und ein paar anderen Spezialfällen.
 
 Root und jeder andere, für den das Plugin freigeschaltet ist, kann unter Tools -> Übersetzung dann Strings für jede Sprache anlegen und die Übersetzung mit eingeben. Alle Änderungen sind sofort verfügbar, der Webserver muss natürlich nicht wie bei gettext neu gestartet werden.
@@ -22,3 +22,4 @@ Die Übersetzungsseite braucht Filtermöglichkeiten, damit schnell nach Strings ge
 Sprachen sollten hinzugefügt oder wieder gelöscht werden können.
 Root sollte für jede Sprache festlegen können, wer diese Sprache bearbeiten darf und wer nicht. Englisch und Deutsch könnten so fixe Sprachen sein, die von den Admins gepflegt werden und jeder Nutzer darf beliebige andere Sprachen hinzufügen wie Latein, Plattdeutsch oder die Pirrrratensprache.
 Man sollte nach einzelnen Strings suchen können. Das Plugin muss dann ein grep in Stud.IP durchführen und schauen, wo wird der String verwendet, damit man als Übersetzer sich immer den Kontext vor Augen führen kann.
+Andere Plugins brauchen eine Methode, um eine mitgelieferte Übersetzungsdatei (PO-Format) an EasyTranslator zu übergeben, um gleich bei der Installation des Plugins die Übersetzungsdatei mit abzugeben.
