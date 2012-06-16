@@ -49,6 +49,14 @@ class TranslateDB_sqlite implements TranslateDB {
         "");
     }
     
+    public function delete($language_id, $text) {
+        return $this->db->exec(
+            "DELETE FROM translations " .
+            "WHERE string = ".$this->db->quote($text)." ".
+                "AND language_id = ".$this->db->quote($language_id)." " .
+        "");
+    }
+    
     public function get($language_id, $text) {
         return $this->db->query(
             "SELECT string, translation, origin " .

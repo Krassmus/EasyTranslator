@@ -66,7 +66,7 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
     public function get_text_action() {
         $translation = I18nConnector::get();
         $data = $translation->get(Request::get('language_id'), studip_utf8decode(Request::get("string")));
-        $data['string'] = studip_utf8encode($data['string']);
+        $data['string'] = Request::get("string");
         $data['translation'] = studip_utf8encode($data['translation']);
         $data['origin'] = studip_utf8encode($data['origin']);
         echo json_encode($data);
@@ -74,13 +74,19 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
     
     public function save_text_action() {
         $translation = I18nConnector::get();
-        if (Request::get("text") && Request::get("translation") && Request::get("language_id") && count($_POST)) {
+        if (Request::get("originaltext") && Request::get("text") && Request::get("language_id") && count($_POST)) {
             $translation->add(
                 studip_utf8decode(Request::get("language_id")), 
                 studip_utf8decode(Request::get("text")), 
                 studip_utf8decode(Request::get("translation")), 
                 studip_utf8decode(Request::get("origin"))
             );
+            if (Request::get("originaltext") !== Request::get("text")) {
+                $translation->delete(
+                    studip_utf8decode(Request::get("language_id")), 
+                    studip_utf8decode(Request::get("originaltext"))
+                );
+            }
         }
     }
     

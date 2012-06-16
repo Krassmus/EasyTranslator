@@ -1,6 +1,8 @@
 <style>
     .select_table {
         border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
     }
     .select_table > thead > tr > th, .select_table > tbody > tr > td {
         padding: 6px;
@@ -39,7 +41,7 @@
     <tbody>
         <? if (count($translations)) : ?>
         <? foreach ($translations as $translation) : ?>
-        <tr>
+        <tr data-original-text="<?= htmlReady($translation['string']) ?>">
             <td>
                 <?= htmlReady($translation['string']) ?>
                 <div class="metadata"><?= 
