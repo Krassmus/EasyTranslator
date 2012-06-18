@@ -76,6 +76,10 @@ $infobox = array(
             array(
                 'icon' => "icons/16/black/plus", 
                 'text' => '<a href="" onClick="STUDIP.i18n.edit(); return false;">'.l("Neuen Eintrag erstellen")."</a>"
+            ),
+            array(
+                'icon' => "icons/16/black/download",
+                'text' => '<a href="'.PluginEngine::getLink($plugin, array('language_id' => Request::get("language_id")), 'download').'">'.ll("PO-Datei runterladen").'</a>'
             )
         )
     )

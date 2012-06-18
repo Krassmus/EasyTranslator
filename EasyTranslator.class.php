@@ -90,6 +90,19 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
         }
     }
     
+    public function download_action() {
+        $translation = I18nConnector::get();
+        $output = "";
+        foreach ($translation->getStrings(Request::get("language_id")) as $string) {
+            $output .= 'msgid "'.addslashes($string['string']).'"'."\n";
+            $output .= 'msgstr "'.addslashes($string['translation']).'"'."\n";
+            $output .= "\n";
+        }
+        header("Content-Type: text/x-gettext-translation");
+        header("Content-Disposition: attachment; filename=translation_".Request::get("language_id").".po");
+        echo $output;
+    }
+    
     protected function getTemplate($template_file_name, $layout = "without_infobox") {
         if (!$this->template_factory) {
             $this->template_factory = new Flexi_TemplateFactory(dirname(__file__)."/templates");
