@@ -48,9 +48,46 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
         Navigation::activateItem('/tools/translations');
         $translation = I18nConnector::get();
         
-        /*if (Request::get("text") && Request::get("translation") && Request::get("language_id") && count($_POST)) {
-            $translation->add(Request::get("language_id"), Request::get("text"), Request::get("translation"), Request::get("origin"));
-        }*/
+        if ($_FILES['po_file']) {
+            $po = file($_FILES['po_file']['tmp_name']);
+            $msgid = $msgstr = null;
+            foreach ($po as $line) {
+                if ($line[0] === "#") {
+                    continue;
+                }
+                if (preg_match("/^(msgid|msgstr)?\s*\"(.*?)\"\s*$/", $line, $matches)) {
+                    if ($matches[1] === "msgid") {
+                        if ($msgid && $msgstr) {
+                            $translation->add(
+                                Request::get("language_id"), 
+                                $msgid, 
+                                $msgstr, 
+                                Request::get("origin")
+                            );
+                        }
+                        $msgid = $matches[2];
+                        $msgstr = null;
+                    } elseif ($matches[1] === "msgstr") {
+                        if ($msgid) {
+                            $msgstr = $matches[2];
+                        }
+                    } elseif ($msgid && !$msgstr) {
+                        $msgid .= $matches[2];
+                    } elseif ($msgid && $msgstr) {
+                        $msgstr .= $matches[2];
+                    }
+                }
+            }
+            if ($msgid && $msgstr) {
+                $translation->add(
+                    Request::get("language_id"), 
+                    $msgid, 
+                    $msgstr, 
+                    Request::get("origin")
+                );
+            }
+            PageLayout::postMessage(MessageBox::success(ll("Erfolgreich hochgeladen!")));
+        }
         
         $template = $this->getTemplate("local.php", "base");
         $template->set_attribute('plugin', $this);

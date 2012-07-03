@@ -66,6 +66,28 @@
     </tbody>
 </table>
 
+<div id="translation_upload_window_title" style="display: none;"><?= ll("PO-Datei hochladen") ?></div>
+<div id="translation_upload_window" style="display: none;">
+    <form action ="?" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="language_id" value="<?= Request::option('language_id') ?>">
+        <table>
+            <tbody>
+                <tr>
+                    <td><label for="po_file"><?= l("Datei") ?></label></td>
+                    <td><input type="file" name="po_file" id="po_file"></td>
+                </tr>
+                <tr>
+                    <td><label for="origin"><?= l("Ursprung/Kontext") ?></label></td>
+                    <td><input type="text" name="origin" id="origin"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><button class="button" type="submit"><?= l("PO-Datei hochladen") ?></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
 
 <?
 
@@ -76,6 +98,10 @@ $infobox = array(
             array(
                 'icon' => "icons/16/black/plus", 
                 'text' => '<a href="" onClick="STUDIP.i18n.edit(); return false;">'.l("Neuen Eintrag erstellen")."</a>"
+            ),
+            array(
+                'icon' => "icons/16/black/upload",
+                'text' => '<a href="#" onClick="jQuery(\'#translation_upload_window\').dialog({show: \'fade\', hide: \'fade\', modal: true, width: \'400px\', title: jQuery(\'#translation_upload_window_title\').text() }); return false;">'.ll("PO-Datei hochladen").'</a>'
             ),
             array(
                 'icon' => "icons/16/black/download",
