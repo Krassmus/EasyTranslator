@@ -51,7 +51,8 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
         if ($_FILES['po_file']) {
             $po = file($_FILES['po_file']['tmp_name']);
             $msgid = $msgstr = null;
-            foreach ($po as $line) {
+            for (;count($po) > 0; array_shift($po)) {
+                $line = $po[0];
                 if ($line[0] === "#") {
                     continue;
                 }
@@ -60,8 +61,8 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
                         if ($msgid && $msgstr) {
                             $translation->add(
                                 Request::get("language_id"), 
-                                $msgid, 
-                                $msgstr, 
+                                stripslashes($msgid), 
+                                stripslashes($msgstr), 
                                 Request::get("origin")
                             );
                         }
@@ -81,8 +82,8 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
             if ($msgid && $msgstr) {
                 $translation->add(
                     Request::get("language_id"), 
-                    $msgid, 
-                    $msgstr, 
+                    stripslashes($msgid), 
+                    stripslashes($msgstr), 
                     Request::get("origin")
                 );
             }
