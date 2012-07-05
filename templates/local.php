@@ -27,7 +27,20 @@
     }
 </style>
 
-<input type="hidden" id="language_id" value="<?= htmlReady(Request::get("language_id")) ?>">
+<form action="?" method="get">
+    <input type="hidden" id="language_id" name="language_id" value="<?= htmlReady(Request::get("language_id")) ?>">
+    <table align="center">
+        <tbody>
+            <tr>
+                <td><label for="searchword"><?= l("Filter") ?></label></td>
+                <td><input type="text" name="searchword" id="searchword" value="<?= htmlReady(Request::get("searchword")) ?>"></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;"><?= Studip\Button::create(ll("filtern")) ?></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
 
 <table id="translation_table" class="select_table">
     <thead>

@@ -92,7 +92,8 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
         
         $template = $this->getTemplate("local.php", "base");
         $template->set_attribute('plugin', $this);
-        $template->set_attribute('translations', $translation->getStrings(Request::get("language_id")));
+        $strings = $translation->getStrings(Request::get("language_id"), Request::get("searchword"));
+        $template->set_attribute('translations', $strings);
         echo $template->render();
     }
     

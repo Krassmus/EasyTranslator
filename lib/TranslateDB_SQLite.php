@@ -24,6 +24,7 @@ class TranslateDB_sqlite implements TranslateDB {
             "SELECT string, translation, origin " .
             "FROM translations " .
             "WHERE language_id = ".$this->db->quote($language_id)." " .
+                ($searchword !== null ? "AND (string LIKE ".$this->db->quote('%'.$searchword.'%')." OR translation LIKE ".$this->db->quote('%'.$searchword.'%').") " : "").
             "ORDER BY string ASC " .
         "")->fetchAll(PDO::FETCH_ASSOC);
     }
