@@ -6,7 +6,7 @@ STUDIP.i18n = {
                 jQuery("#edit_window_edit_entry_title").text(), 
                 metadata.string, 
                 metadata.translation, 
-                ""
+                metadata.origin
             );
         } else {
             STUDIP.i18n.showEditWindow(
@@ -38,6 +38,7 @@ STUDIP.i18n = {
                 'originaltext': jQuery("#originaltext").val(),
                 'text': jQuery("#text").val(),
                 'translation': jQuery("#translation").val(),
+                'origin': jQuery("#origin").val(),
                 'language_id': jQuery('#language_id').val()
             },
             'type': "post",
@@ -66,6 +67,7 @@ STUDIP.i18n = {
 jQuery(function () {
     jQuery("span.nottranslated, span.translation").bind("click", function (event) {
         if (event.ctrlKey || event.altKey) {
+            
             var string = jQuery(this).attr("data-original-string");
             var language_id = jQuery("#language_id").val();
             jQuery.ajax({

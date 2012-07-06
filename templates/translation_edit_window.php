@@ -13,6 +13,10 @@
             <td><label for="translation"><?= l("Übersetzung") ?></label></td>
             <td><input type="text" name="translation" id="translation" value=""></td>
         </tr>
+        <tr>
+            <td><label for="origin"><?= l("Ursprung/Kontext") ?></label></td>
+            <td><input type="text" name="origin" id="origin" value=""></td>
+        </tr>
     </table>
     <div id="php_format_error" style="display: none;"><?= Assets::img("icons/16/red/exclaim", array('class' => "text-bottom")) ?> <?= l("Beide Strings müssen gleichviele %s enthalten.") ?></div>
     <?= Studip\LinkButton::create(ll("speichern"), "", array('onclick' => "STUDIP.i18n.save(); return false;")) ?>
