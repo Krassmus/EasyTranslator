@@ -71,7 +71,7 @@
         <? endforeach ?>
         <? else : ?>
         <tr>
-            <td colspan="3">
+            <td colspan="4">
                 <?= ll("Keine Übersetzungen gefunden.") ?>
             </td>
         </tr>
@@ -102,6 +102,29 @@
     </form>
 </div>
 
+<div id="translation_download_window_title" style="display: none;"><?= l("PO-Datei herunterladen") ?></div>
+<div id="translation_download_window" style="display: none;">
+    <table>
+        <tbody>
+            <tr>
+                <td><label for="origin"><?= l("Ursprung/Kontext") ?></label></td>
+                <td>
+                    <select id="download_origin">
+                        <option><?= l("alles") ?></option>
+                        <? foreach ($origins as $origin) : ?>
+                        <option value="<?= htmlReady($origin) ?>"><?= htmlReady($origin) ?></option>
+                        <? endforeach ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button class="button" onClick="location.href = STUDIP.URLHelper.getURL('<?= PluginEngine::getURL($plugin, array('language_id' => Request::get("language_id")), 'download') ?>', {'origin': jQuery('#download_origin').val()});"><?= l("runterladen") ?></button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 <?
 
 $infobox = array(
@@ -118,7 +141,7 @@ $infobox = array(
             ),
             array(
                 'icon' => "icons/16/black/download",
-                'text' => '<a href="'.PluginEngine::getLink($plugin, array('language_id' => Request::get("language_id")), 'download').'">'.ll("PO-Datei runterladen").'</a>'
+                'text' => '<a onClick="jQuery(\'#translation_download_window\').dialog({show: \'fade\', hide: \'fade\', modal: true, width: \'400px\', title: jQuery(\'#translation_upload_window_title\').text() }); return false;" href="#">'.ll("PO-Datei runterladen").'</a>'
             )
         )
     )

@@ -19,12 +19,21 @@ class TranslateDB_sqlite implements TranslateDB {
         "")->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function getStrings($language_id, $searchword = null) {
+    public function getOrigins() {
+        return $this->db->query(
+            "SELECT DISTINCT origin " .
+            "FROM translations " .
+            "ORDER BY origin ASC " .
+        "")->fetchAll(PDO::FETCH_COLUMN);
+    }
+    
+    public function getStrings($language_id, $searchword = null, $origin = null) {
         return $this->db->query(
             "SELECT string, translation, origin " .
             "FROM translations " .
             "WHERE language_id = ".$this->db->quote($language_id)." " .
                 ($searchword !== null ? "AND (string LIKE ".$this->db->quote('%'.$searchword.'%')." OR translation LIKE ".$this->db->quote('%'.$searchword.'%').") " : "").
+                ($origin !== null ? "AND origin = ".$this->db->quote($origin)." " : "").
             "ORDER BY string ASC " .
         "")->fetchAll(PDO::FETCH_ASSOC);
     }

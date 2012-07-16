@@ -8,7 +8,9 @@ interface TranslateDB {
      */
     public function getLanguages();
     
-    public function getStrings($language_id, $searchword = null);
+    public function getOrigins();
+    
+    public function getStrings($language_id, $searchword = null, $origin = null);
     
     public function translate($language_id, $string);
     

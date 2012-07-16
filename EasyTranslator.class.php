@@ -5,20 +5,31 @@ require_once dirname(__file__)."/lib/I18nConnector.php";
 function ll($text, $language_id = null) {
     $language_id or $language_id = $GLOBALS['_language'];
     $translation = I18nConnector::get()->translate($language_id, $text);
+    if ($translation === false) {
+        if ($GLOBALS['i_page']) {
+            preg_match("/\/plugins\.php\/(\w*?)[\/$]/", $_SERVER['REQUEST_URI'], $matches);
+            $origin = $matches[1];
+        }
+        $origin or $origin = "";
+        I18nConnector::get()->add($language_id, $text, "", $origin);
+    }
     return $translation 
         ? $translation
         : $text;
 }
 
 function l($text, $language_id = null) {
-    $language_id or $language_id = $GLOBALS['_language'];
-    $translation = I18nConnector::get()->translate($language_id, $text);
-    return $translation 
+    $translation = ll($text, $language_id);
+    $translated = $text !== $translation;
+    return $translated 
         ? '<span class="translation '.$language_id.'" data-original-string="'.htmlReady($text).'">'.htmlReady($translation).'</span>'
-        : '<span class="nottranslated" data-original-string="'.htmlReady($text).'">'.$text.'</span>';
+        : '<span class="nottranslated" data-original-string="'.htmlReady($text).'">'.htmlReady($translation).'</span>';
 }
 
 class EasyTranslator extends StudIPPlugin implements SystemPlugin {
+    
+    private $foreign_system = "https://develop.studip.de/studip";
+    private $transaction_key = "hfghukhjgv77hbaza7bbnababvjk8zhva";
     
     public function __construct() {
         parent::__construct();
@@ -49,44 +60,11 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
         $translation = I18nConnector::get();
         
         if ($_FILES['po_file']) {
-            $po = file($_FILES['po_file']['tmp_name']);
-            $msgid = $msgstr = null;
-            for (;count($po) > 0; array_shift($po)) {
-                $line = $po[0];
-                if ($line[0] === "#") {
-                    continue;
-                }
-                if (preg_match("/^(msgid|msgstr)?\s*\"(.*?)\"\s*$/", $line, $matches)) {
-                    if ($matches[1] === "msgid") {
-                        if ($msgid && $msgstr) {
-                            $translation->add(
-                                Request::get("language_id"), 
-                                stripslashes($msgid), 
-                                stripslashes($msgstr), 
-                                Request::get("origin")
-                            );
-                        }
-                        $msgid = $matches[2];
-                        $msgstr = null;
-                    } elseif ($matches[1] === "msgstr") {
-                        if ($msgid) {
-                            $msgstr = $matches[2];
-                        }
-                    } elseif ($msgid && !$msgstr) {
-                        $msgid .= $matches[2];
-                    } elseif ($msgid && $msgstr) {
-                        $msgstr .= $matches[2];
-                    }
-                }
-            }
-            if ($msgid && $msgstr) {
-                $translation->add(
-                    Request::get("language_id"), 
-                    stripslashes($msgid), 
-                    stripslashes($msgstr), 
-                    Request::get("origin")
-                );
-            }
+            $this->add_po_file(
+                $_FILES['po_file']['tmp_name'],
+                Request::get("language_id"),
+                Request::get("origin")
+            );
             PageLayout::postMessage(MessageBox::success(ll("Erfolgreich hochgeladen!")));
         }
         
@@ -94,7 +72,64 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
         $template->set_attribute('plugin', $this);
         $strings = $translation->getStrings(Request::get("language_id"), Request::get("searchword"));
         $template->set_attribute('translations', $strings);
+        $template->set_attribute('origins', $translation->getOrigins());
         echo $template->render();
+    }
+    
+    /**
+     * This method is also suitable for plugins that want to come with their
+     * own translation-file. Usage for plugins:
+     *   if (class_exists("EasyTranslator")) {
+     *     PluginEngine::getPlugin("EasyTranslator")->add_po_file(
+     *       dirname(__file__)."/locale/de.po",
+     *       "de_DE",
+     *       "my_plugin"
+     *     );
+     *   }
+     * @param type $filepath
+     * @param type $language_id
+     * @param type $origin 
+     */
+    public function add_po_file($filepath, $language_id, $origin = "") {
+        $translation = I18nConnector::get();
+        $po = file($filepath);
+        $msgid = $msgstr = null;
+        for (;count($po) > 0; array_shift($po)) {
+            $line = $po[0];
+            if ($line[0] === "#") {
+                continue;
+            }
+            if (preg_match("/^(msgid|msgstr)?\s*\"(.*?)\"\s*$/", $line, $matches)) {
+                if ($matches[1] === "msgid") {
+                    if ($msgid && $msgstr) {
+                        $translation->add(
+                            $language_id, 
+                            stripslashes($msgid), 
+                            stripslashes($msgstr), 
+                            $origin
+                        );
+                    }
+                    $msgid = $matches[2];
+                    $msgstr = null;
+                } elseif ($matches[1] === "msgstr") {
+                    if ($msgid) {
+                        $msgstr = $matches[2];
+                    }
+                } elseif ($msgid && !$msgstr) {
+                    $msgid .= $matches[2];
+                } elseif ($msgid && $msgstr) {
+                    $msgstr .= $matches[2];
+                }
+            }
+        }
+        if ($msgid && $msgstr) {
+            $translation->add(
+                $language_id, 
+                stripslashes($msgid), 
+                stripslashes($msgstr), 
+                $origin
+            );
+        }
     }
     
     public function grep_text_action() {
@@ -132,7 +167,8 @@ class EasyTranslator extends StudIPPlugin implements SystemPlugin {
     public function download_action() {
         $translation = I18nConnector::get();
         $output = "";
-        foreach ($translation->getStrings(Request::get("language_id")) as $string) {
+        $origin = Request::get("origin") ? Request::get("origin") : null;
+        foreach ($translation->getStrings(Request::get("language_id"), null, $origin) as $string) {
             $output .= 'msgid "'.addslashes($string['string']).'"'."\n";
             $output .= 'msgstr "'.addslashes($string['translation']).'"'."\n";
             $output .= "\n";
