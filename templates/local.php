@@ -55,7 +55,7 @@
         <? if (count($translations)) : ?>
         <? foreach ($translations as $translation) : ?>
         <tr data-original-text="<?= htmlReady($translation['string']) ?>">
-            <td>
+            <td class="original">
                 <?= htmlReady($translation['string']) ?>
                 <div class="metadata"><?= 
                     json_encode(array(
@@ -64,8 +64,8 @@
                         'origin' => studip_utf8encode($translation['origin'])
                     )) ?></div>
             </td>
-            <td><?= htmlReady($translation['translation']) ?></td>
-            <td><?= htmlReady($translation['origin']) ?></td>
+            <td class="translation"><?= htmlReady($translation['translation']) ?></td>
+            <td class="origin"><?= htmlReady($translation['origin']) ?></td>
             <td><a href="#" onClick="return false;"><?= Assets::img("icons/16/blue/search") ?></a></td>
         </tr>
         <? endforeach ?>

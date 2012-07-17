@@ -3,9 +3,9 @@
     <input type="hidden" id="language_id" name="language_id" value="<?= Request::get("language_id") ? htmlReady(Request::get("language_id")) : $GLOBALS['_language'] ?>">
     <table>
         <tr>
-            <td><label for="text"><?= l("Text-String") ?></label></td>
+            <td><label for="translation_text"><?= l("Text-String") ?></label></td>
             <td>
-                <input type="text" name="text" id="text" value="">
+                <input type="text" name="text" id="translation_text" value="">
                 <input type="hidden" name="originaltext" id="originaltext" value="">
             </td>
         </tr>
@@ -14,8 +14,8 @@
             <td><input type="text" name="translation" id="translation" value=""></td>
         </tr>
         <tr>
-            <td><label for="origin"><?= l("Ursprung/Kontext") ?></label></td>
-            <td><input type="text" name="origin" id="origin" value=""></td>
+            <td><label for="translation_origin"><?= l("Ursprung/Kontext") ?></label></td>
+            <td><input type="text" id="translation_origin" value=""></td>
         </tr>
     </table>
     <div id="php_format_error" style="display: none;"><?= Assets::img("icons/16/red/exclaim", array('class' => "text-bottom")) ?> <?= l("Beide Strings müssen gleichviele %s enthalten.") ?></div>
