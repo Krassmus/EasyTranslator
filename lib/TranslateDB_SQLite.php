@@ -7,81 +7,122 @@ class TranslateDB_sqlite implements TranslateDB {
     protected $db = null;
     
     public function __construct() {
-        $this->db = new PDO("sqlite:".$GLOBALS['STUDIP_BASE_PATH']."/data/translatedb.sqlite");
+        $this->db = new SQLite3($GLOBALS['STUDIP_BASE_PATH']."/data/translatedb.sqlite");
         $this->checkDB();
     }
     
     public function getLanguages() {
-        return $this->db->query(
+        $languages = array();
+        $result = $this->db->query(
             "SELECT language_id AS id, name " .
             "FROM languages " .
             "ORDER BY name ASC " .
-        "")->fetchAll(PDO::FETCH_ASSOC);
+        "");
+        while($language = $result->fetchArray(SQLITE3_ASSOC)) {
+            $languages[] = $language;
+        };
+        return $languages;
     }
     
     public function getOrigins() {
-        return $this->db->query(
+        $origins = array();
+        $result = $this->db->query(
             "SELECT DISTINCT origin " .
             "FROM translations " .
             "ORDER BY origin ASC " .
-        "")->fetchAll(PDO::FETCH_COLUMN);
+        "");
+        while ($origin = $result->fetchArray(SQLITE3_NUM)) {
+            $origins[] = $origin[0];
+        }
+        return $origins;
     }
     
     public function getStrings($language_id, $searchword = null, $origin = null) {
-        return $this->db->query(
+        $strings = array();
+        $statement = $this->db->prepare(
             "SELECT string, translation, origin " .
             "FROM translations " .
-            "WHERE language_id = ".$this->db->quote($language_id)." " .
-                ($searchword !== null ? "AND (string LIKE ".$this->db->quote('%'.$searchword.'%')." OR translation LIKE ".$this->db->quote('%'.$searchword.'%').") " : "").
-                ($origin !== null ? "AND origin = ".$this->db->quote($origin)." " : "").
+            "WHERE language_id = :language_id " .
+                ($searchword !== null ? "AND (string LIKE :searchword OR translation LIKE :searchword) " : "").
+                ($origin !== null ? "AND origin = :origin " : "").
             "ORDER BY string ASC " .
-        "")->fetchAll(PDO::FETCH_ASSOC);
+        "");
+        $statement->bindValue(":language_id", $language_id);
+        if ($searchword !== null) {
+            $statement->bindValue(":searchword", '%'.$searchword.'%');
+        }
+        if ($origin !== null) {
+            $statement->bindValue(":origin", $origin);
+        }
+        $result = $statement->execute();
+        while ($string = $result->fetchArray(SQLITE3_ASSOC)) {
+            $strings[] = $string;
+        }
+        return $strings;
     }
     
     public function translate($language_id, $string) {
-        return $this->db->query(
+        $statement = $this->db->prepare(
             "SELECT translation " .
             "FROM translations " .
-            "WHERE language_id = ".$this->db->quote($language_id)." " .
-                "AND string = ".$this->db->quote($string)." " .
-        "")->fetch(PDO::FETCH_COLUMN, 0);
+            "WHERE language_id = :language_id " .
+                "AND string = :string " .
+        "");
+        $statement->bindValue(":language_id", $language_id);
+        $statement->bindValue(":string", $string);
+        $result = $statement->execute();
+        $result = $result->fetchArray(SQLITE3_NUM);
+        return $result[0];
     }
     
     public function add($language_id, $text, $translation, $origin) {
-        return $this->db->exec(
+        $statement = $this->db->prepare(
             "INSERT OR REPLACE INTO translations (language_id, string, translation, origin) " .
             "VALUES (".
-                $this->db->quote($language_id).", ".
-                $this->db->quote($text).", ".
-                $this->db->quote($translation).", ".
-                $this->db->quote($origin)." " .
+                ":language_id, ".
+                ":text, ".
+                ":translation, ".
+                ":origin " .
             ") " .
         "");
+        $statement->bindValue(":language_id", $language_id);
+        $statement->bindValue(":text", $text);
+        $statement->bindValue(":translation", $translation);
+        $statement->bindValue(":origin", $origin);
+        return $statement->execute() !== false;
     }
     
     public function delete($language_id, $text) {
-        return $this->db->exec(
+        $statement = $this->db->prepare(
             "DELETE FROM translations " .
-            "WHERE string = ".$this->db->quote($text)." ".
-                "AND language_id = ".$this->db->quote($language_id)." " .
+            "WHERE string = :string ".
+                "AND language_id = :language_id " .
         "");
+        $statement->bindValue(":language_id", $language_id);
+        $statement->bindValue(":string", $text);
+        return $statement->execute() !== false;
     }
     
     public function get($language_id, $text) {
-        return $this->db->query(
+        $statement = $this->db->prepare(
             "SELECT string, translation, origin " .
             "FROM translations " .
-            "WHERE language_id = ".$this->db->quote($language_id)." " .
-                "AND string = ".$this->db->quote($text)." " .
-        "")->fetch(PDO::FETCH_ASSOC);
+            "WHERE language_id = :language_id " .
+                "AND string = :string " .
+        "");
+        $statement->bindValue(":language_id", $language_id);
+        $statement->bindValue(":string", $string);
+        $result = $statement->execute();
+        return $result->fetchArray(SQLITE3_ASSOC);
+        return $result[0];
     }
     
     protected function checkDB() {
-        $tables = $this->db->query(
+        $result = $this->db->query(
             "SELECT * FROM sqlite_master WHERE type='table' " .
-        "")->fetchAll(PDO::FETCH_ASSOC);
+        "");
         $language_table_exists = $translation_table_exists = false;
-        foreach ($tables as $table) {
+        while ($table = $result->fetchArray(SQLITE3_ASSOC)) {
             if ($table['name'] === "languages") {
                 $language_table_exists = true;
             } elseif($table['name'] === "translations") {

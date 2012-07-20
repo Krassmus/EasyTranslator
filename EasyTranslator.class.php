@@ -26,6 +26,13 @@ function l($text, $language_id = null) {
         : '<span class="nottranslated" data-original-string="'.htmlReady($text).'">'.htmlReady($translation).'</span>';
 }
 
+if (!function_exists("_")) {
+    //Falls gettext als Modul deaktiviert ist.
+    function _($text) {
+        return ll($text);
+    }
+}
+
 class EasyTranslator extends StudIPPlugin implements SystemPlugin {
     
     private $foreign_system = "https://develop.studip.de/studip";
