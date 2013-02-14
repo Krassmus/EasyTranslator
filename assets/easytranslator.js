@@ -58,7 +58,7 @@ STUDIP.i18n = {
         });
     },
     'check': function () {
-        if (jQuery("#text").val().split(/\%s/).length !== jQuery("#translation").val().split(/\%s/).length) {
+        if (jQuery("#translation_text").val().split(/\%s/).length !== jQuery("#translation").val().split(/\%s/).length) {
             jQuery("#php_format_error").show();
         } else {
             jQuery("#php_format_error").hide();

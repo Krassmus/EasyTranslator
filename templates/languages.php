@@ -53,7 +53,14 @@ jQuery(function () {
 
 <?
 
-$infobox = array();
+$infobox = array(
+    array(
+        'kategorie' => _("Information"),
+        'eintrag' => array(
+            array('icon' => "icons/16/black/info", 'text' => l("Alle bekannten Sprachen"))
+        )
+    )
+);
 
 $infobox = array(
     'picture' => $GLOBALS['ABSOLUTE_URI_STUDIP'].$plugin->getPluginPath()."/assets/rosettastone.jpg",

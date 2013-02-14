@@ -1,6 +1,9 @@
+<?
+$language_id = Request::get("language_id") ? htmlReady(Request::get("language_id")) : $_SESSION['_language'];
+?>
 <div id="edit_window" style="display: none;">
     <form action="?" method="post">
-    <input type="hidden" id="language_id" name="language_id" value="<?= Request::get("language_id") ? htmlReady(Request::get("language_id")) : $GLOBALS['_language'] ?>">
+    <input type="hidden" id="language_id" name="language_id" value="<?= htmlReady($language_id) ?>">
     <table>
         <tr>
             <td><label for="translation_text"><?= l("Text-String") ?></label></td>
@@ -22,5 +25,5 @@
     <?= Studip\LinkButton::create(ll("speichern"), "", array('onclick' => "STUDIP.i18n.save(); return false;")) ?>
     </form>
 </div>
-<div id="edit_window_new_entry_title" style="display: none;"><?= l("Neuer Übersetzungseintrag") ?></div>
-<div id="edit_window_edit_entry_title" style="display: none;"><?= l("Übersetzungseintrag bearbeiten") ?></div>
+<div id="edit_window_new_entry_title" style="display: none;"><?= l("Neuer Übersetzungseintrag") ?> - <?= htmlReady($language_id) ?></div>
+<div id="edit_window_edit_entry_title" style="display: none;"><?= l("Übersetzungseintrag bearbeiten") ?> - <?= htmlReady($language_id) ?></div>

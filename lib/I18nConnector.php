@@ -10,7 +10,7 @@ class I18nConnector {
     static public function get() {
         if (self::$connector === null) {
             if (!$GLOBALS['TranslationEngine']) {
-                $GLOBALS['TranslationEngine'] = "TranslateDB_sqlite";
+                $GLOBALS['TranslationEngine'] = "TranslateDB_sqlitePDO";
             }
             if ($GLOBALS['TranslationEngine'] && class_exists($GLOBALS['TranslationEngine'])) {
                 $engine = $GLOBALS['TranslationEngine'];
