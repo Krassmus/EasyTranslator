@@ -7,7 +7,11 @@ interface TranslateDB {
      * @return: array(array('id' => "de_DE", 'name' => "Deutsch"), ...) 
      */
     public function getLanguages();
-    
+
+    /**
+     * Returns an array of all origins in the database.
+     * @return: array of strings
+     */
     public function getOrigins();
     
     public function getStrings($language_id, $searchword = null, $origin = null);

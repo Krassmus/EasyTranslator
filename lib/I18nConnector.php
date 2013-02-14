@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__file__)."/TranslateDB_SQLite.php";
+require_once dirname(__file__)."/TranslateDB_SQLitePDO.php";
 
 class I18nConnector {
     
@@ -9,7 +10,7 @@ class I18nConnector {
     static public function get() {
         if (self::$connector === null) {
             if (!$GLOBALS['TranslationEngine']) {
-            $GLOBALS['TranslationEngine'] = "TranslateDB_sqlite";
+                $GLOBALS['TranslationEngine'] = "TranslateDB_sqlite";
             }
             if ($GLOBALS['TranslationEngine'] && class_exists($GLOBALS['TranslationEngine'])) {
                 $engine = $GLOBALS['TranslationEngine'];

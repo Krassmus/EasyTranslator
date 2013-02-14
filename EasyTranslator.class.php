@@ -36,7 +36,6 @@ if (!function_exists("_")) {
 class EasyTranslator extends StudIPPlugin implements SystemPlugin {
     
     private $foreign_system = "https://develop.studip.de/studip";
-    private $transaction_key = "hfghukhjgv77hbaza7bbnababvjk8zhva";
     
     public function __construct() {
         parent::__construct();
