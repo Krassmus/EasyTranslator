@@ -127,27 +127,23 @@
 
 <?
 
-$infobox = array(
-    array(
-        'kategorie' => l("Aktionen"),
-        'eintrag' => array(
-            array(
-                'icon' => "icons/16/black/plus", 
-                'text' => '<a href="" onClick="STUDIP.i18n.edit(); return false;">'.l("Neuen Eintrag erstellen")."</a>"
-            ),
-            array(
-                'icon' => "icons/16/black/upload",
-                'text' => '<a href="#" onClick="jQuery(\'#translation_upload_window\').dialog({show: \'fade\', hide: \'fade\', modal: true, width: \'400px\', title: jQuery(\'#translation_upload_window_title\').text() }); return false;">'.ll("PO-Datei hochladen").'</a>'
-            ),
-            array(
-                'icon' => "icons/16/black/download",
-                'text' => '<a onClick="jQuery(\'#translation_download_window\').dialog({show: \'fade\', hide: \'fade\', modal: true, width: \'400px\', title: jQuery(\'#translation_upload_window_title\').text() }); return false;" href="#">'.ll("PO-Datei runterladen").'</a>'
-            )
-        )
-    )
+$actions = new ActionsWidget();
+$actions->addLink(
+    ll("Neuen Eintrag erstellen"),
+    "#",
+    Icon::create("add", "info"),
+    array('onClick' => "STUDIP.i18n.edit(); return false;")
 );
-
-$infobox = array(
-    'picture' => $GLOBALS['ABSOLUTE_URI_STUDIP'].$plugin->getPluginPath()."/assets/rosettastone.jpg",
-    'content' => $infobox
+$actions->addLink(
+    ll("PO-Datei hochladen"),
+    "#2",
+    Icon::create("upload", "info"),
+    array('onClick' => "jQuery('#translation_upload_window').dialog({show: 'fade', hide: 'fade', modal: true, width: '400px', title: jQuery('#translation_upload_window_title').text() }); return false;")
 );
+$actions->addLink(
+    ll("PO-Datei runterladen"),
+    "#3",
+    Icon::create("download", "info"),
+    array('onClick' => "jQuery('#translation_download_window').dialog({show: 'fade', hide: 'fade', modal: true, width: '400px', title: jQuery('#translation_upload_window_title').text() }); return false;")
+);
+Sidebar::Get()->addWidget($actions);
